@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+
+require "rubygems" # ruby1.9 doesn't "require" it though
+require "thor"
+
+require File.expand_path(File.dirname(__FILE__)) << "/../lib/sphonglepress.rb"
+
+Sphonglepress::App.start
