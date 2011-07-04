@@ -14,7 +14,7 @@ module Sphonglepress
       
       def build
         cwd = Dir.pwd
-        Dir.chdir ::Sphonglepress::App::Config.config["middleman_dir"]
+        Dir.chdir ::Sphonglepress::Config.config["middleman_dir"]
         `mm-build`
         Dir.chdir cwd
       end
