@@ -1,0 +1,39 @@
+!!! 5
+%html{ :lang => "en" }
+  %head
+    %title <?php wp_title(); ?>
+    %meta{ :charset => "utf-8" }    
+
+    / Always force latest IE rendering engine (even in intranet) & Chrome Frame
+    %meta{ :content => "IE=edge,chrome=1", "http-equiv" => "X-UA-Compatible" }
+
+    / Comment in layout
+
+    = stylesheet_link_tag "style.css"
+    
+    = javascript_include_tag "jquery"
+    = javascript_include_tag "application.js"
+
+    = yield_content :head
+    
+  %body{ :class => "#{page_classes}" }
+    #main
+      #header
+        %a#logo{:href => "/"}
+          %img{:src=>"/images/logo.png"}
+        #menu
+          %ul
+            :plain
+              <?php wp_list_pages('sort_column=menu_order&title_li=');?>
+      #content-wrapper
+        = yield_content :sidebar
+        #content
+          %h1 
+            :plain
+              <?php wp_title(); ?>
+          
+          /BEGIN_BODY
+          
+          = yield
+      
+          /END_BODY
