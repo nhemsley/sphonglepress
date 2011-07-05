@@ -4,10 +4,14 @@ $:.unshift(File.dirname(__FILE__)) unless
 require 'active_record'
 require 'pathname'
 require 'logger'
+require "thor"
 
-ActiveRecord::Base.logger = Logger.new('sql.log')
-ActiveRecord::Base.configurations = YAML::load(IO.read('config/database.yml'))
-ActiveRecord::Base.establish_connection("development")
+begin
+  ActiveRecord::Base.logger = Logger.new('sql.log')
+  ActiveRecord::Base.configurations = YAML::load(IO.read('config/database.yml'))
+  ActiveRecord::Base.establish_connection("development")
+rescue
+end
 
 require "sphonglepress/extensions.rb"
 require "sphonglepress/git.rb"
@@ -15,12 +19,16 @@ require "sphonglepress/middleman.rb"
 require "sphonglepress/config.rb"
 require "sphonglepress/export.rb"
 require "sphonglepress/database.rb"
-require "sphonglepress/importer.rb"
-require "sphonglepress/visitor.rb"
 
-require "sphonglepress/models/base_post"
-require "sphonglepress/models/attachment"
 
+begin
+  require "sphonglepress/importer.rb"
+  require "sphonglepress/visitor.rb"
+  
+  require "sphonglepress/models/base_post"
+  require "sphonglepress/models/attachment"
+rescue
+end
 
 module Sphonglepress
   VERSION = '0.0.1'
@@ -119,7 +127,7 @@ module Sphonglepress
 
   DB_DIR = PROJECT_DIR.join("db")
   DB_DUMP_DIR = PROJECT_DIR.join("db/dumps")
-  STATIC_DIR = PROJECT_DIR.join(CONFIG["static_dir"])
-  WP_DIR = PROJECT_DIR.join(CONFIG["wp_clone_dir"])
-  WP_UPLOAD_DIR = WP_DIR.join("wp-content/uploads")
+  STATIC_DIR = PROJECT_DIR.join(CONFIG["static_dir"]) rescue nil
+  WP_DIR = PROJECT_DIR.join(CONFIG["wp_clone_dir"]) rescue nil
+  WP_UPLOAD_DIR = WP_DIR.join("wp-content/uploads") rescue nil
 end

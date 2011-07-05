@@ -15,11 +15,15 @@ module Sphonglepress
       end
 
       def config
-        c = YAML::load(IO.read(::Sphonglepress::CONFIG_DIR.join("settings.yml")))
-        c["db"] = YAML::load(IO.read(::Sphonglepress::CONFIG_DIR.join("database.yml")))
-        c["middleman_dir"] = Pathname.new(c["middleman_dir"])
-        c["wp_clone_dir"] = Pathname.new(c["wp_clone_dir"])
-        c
+        begin
+          c = YAML::load(IO.read(::Sphonglepress::CONFIG_DIR.join("settings.yml")))
+          c["db"] = YAML::load(IO.read(::Sphonglepress::CONFIG_DIR.join("database.yml")))
+          c["middleman_dir"] = Pathname.new(c["middleman_dir"])
+          c["wp_clone_dir"] = Pathname.new(c["wp_clone_dir"])
+          return c
+        rescue
+          return {}
+        end
       end
 
       def wp_theme_dir
