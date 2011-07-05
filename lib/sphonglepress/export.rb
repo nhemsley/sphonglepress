@@ -1,8 +1,6 @@
 module Sphonglepress
   class Export
     class << self
-      
-
       def headers_footers
         build_dir = ::Sphonglepress::Config.config["middleman_dir"].join("build")
         puts build_dir
@@ -26,6 +24,11 @@ module Sphonglepress
           File.open(::Sphonglepress::Config.wp_theme_dir.join("footer-#{name}.php"), 'w') {|file| file.write(parts[:footer])}
           File.open(::Sphonglepress::Config.wp_theme_dir.join("#{name}.php"), 'w') {|file| file.write(parts[:content])}
         end
+      end
+      
+      def files
+        cmd = "cp -r #{CONFIG["middleman_dir"]}/build/*/ #{::Sphonglepress::WP_DIR}"
+        `#{cmd}`
       end
 
       def split_file(contents)

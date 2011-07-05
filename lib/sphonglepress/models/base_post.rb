@@ -1,14 +1,10 @@
-require 'active_record'
-
 module Sphonglepress::Models
-  class Page < ActiveRecord::Base
+  class BasePost < ActiveRecord::Base
     set_table_name :wp_posts
     set_primary_key :ID
     
-    scope :pages, where(:post_type => "page")
-  
-    has_many :posts, :foreign_key => 'post_parent', :class_name => "Page"
-    belongs_to :parent, :foreign_key => 'post_parent', :class_name => "Page"
+    has_many :children, :foreign_key => 'post_parent', :class_name => self.class
+    belongs_to :parent, :foreign_key => 'post_parent', :class_name => self.class
     
     after_initialize :set_dates
     

@@ -4,7 +4,7 @@ require 'haml'
 require 'sphonglepress/models/page'
 
 module Sphonglepress
-  class Sitemap
+  class Importer
     class << self
       def import(hash)
         structure(hash)
@@ -59,7 +59,20 @@ module Sphonglepress
       end
 
       def visit(page)
+        Visitor.subclasses.each do |v|
+          v.visit(page)
+          page.posts.each do |p|
+            visit(p)
+          end
+        end
+      end
 
+      def filenames_for_site(pages)
+        filenames = []
+        pages.each do |page|
+          filenames.concat(filenames_for_page(page))
+        end
+        filenames
       end
 
       private
@@ -75,6 +88,18 @@ module Sphonglepress
         join = path.length > 0 ? "_" : ""
         return "#{path << join}" << "#{sanitize_filename(page.post_title)}"
       end
+      
+      def filenames_for_page(page)
+        filenames = []
+            
+        filenames << full_path_for_page(page)
+        page.posts.each do |child|
+          filenames.concat filenames_for_page(child)
+        end
+        filenames
+      end
+      
+      
     end
   end
 end
