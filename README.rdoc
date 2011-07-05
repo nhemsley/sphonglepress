@@ -1,10 +1,10 @@
 = sphonglepress
 
-* http://github.com/#{github_username}/#{project_name}
+* http://github.com/nhemsley/sphonglepress
 
 == DESCRIPTION:
 
-FIX (describe your package)
+Sphonglepress is a command line utility for interacting with & making the task of importing content into a wordpress site
 
 == FEATURES/PROBLEMS:
 
@@ -12,15 +12,29 @@ FIX (describe your package)
 
 == SYNOPSIS:
 
-  FIX (code sample of usage)
+  sphonglepress clean_wp             # clean up the wordpress directory of the external files from middleman
+  sphonglepress create_static_files  # create the static files to import into wordpress from (you will need a sitemap.yml)
+  sphonglepress dump_db              # dump the current database as latest dump to load from
+  sphonglepress export_layout        # export the layout and static files from middleman to wordpress
+  sphonglepress headers_footers      # export headers and footers to wordpress directory
+  sphonglepress help [TASK]          # Describe available tasks or one specific task
+  sphonglepress import_site          # Import the site from sitemap and static files
+  sphonglepress init                 # Initialize wordpress directory
+  sphonglepress load_db              # load the most recent 'clean' database dump
+
 
 == REQUIREMENTS:
 
-* FIX (list of requirements)
+thor
+middleman
+activerecord
+tilt
+haml
 
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
+
+* TODO upload to rubygems
 
 == LICENSE:
 
