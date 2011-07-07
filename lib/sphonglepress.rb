@@ -52,7 +52,13 @@ module Sphonglepress
 
     desc "clean_wp", "clean up the wordpress directory of the external files from middleman"
     def clean_wp
-      raise Exception "unimplemented"
+      dirs = Dir[LAYOUT_DIR.join("public").to_s << "/*/"]
+      full_dirs = dirs.map {|d| WP_DIR.join(Pathname.new(d).basename)}.join(" ")
+      cmd = "rm -rf #{full_dirs}"
+      puts cmd
+      `#{cmd}`
+      cmd = "rm -rf #{WP_UPLOAD_DIR.to_s}/*"
+      `#{cmd}`
     end
     
     desc "import_site", "Import the site from sitemap and static files"
@@ -60,9 +66,10 @@ module Sphonglepress
     def import_site
       pages = Importer.import sitemap_hash
       pages.each { |page| Importer.persist page }
-      if options["visitor"]
-        puts "requiring #{options["visitor"]}"
-        require options["visitor"]
+      visitors = Dir[CONFIG_DIR.join("visitors").to_s << "/*.rb"].map{|v| "config/visitors/" << Pathname.new(v).basename}
+      visitors.each do |v|
+        puts "requiring #{v}"
+        require v
       end
       pages.each { |page| Importer.visit page }
       Visitor.subclasses.each {|s| s.once}
@@ -107,6 +114,15 @@ module Sphonglepress
       Middleman.build
       Export.files
     end
+    
+    desc "full_refresh", "do a full refresh of the whole shebang (layouts, headers, database, import content)"
+    def full_refresh
+      clean_wp
+      headers_footers
+      export_layout
+      load_db
+      import_site
+    end
 
     private
     
@@ -130,4 +146,5 @@ module Sphonglepress
   STATIC_DIR = PROJECT_DIR.join(CONFIG["static_dir"]) rescue nil
   WP_DIR = PROJECT_DIR.join(CONFIG["wp_clone_dir"]) rescue nil
   WP_UPLOAD_DIR = WP_DIR.join("wp-content/uploads") rescue nil
+  LAYOUT_DIR = PROJECT_DIR.join(CONFIG["middleman_dir"]) rescue nil
 end
