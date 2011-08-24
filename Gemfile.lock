@@ -88,5 +88,7 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord
+  haml
   middleman
   thor
+  tilt

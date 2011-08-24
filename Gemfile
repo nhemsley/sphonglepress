@@ -1,8 +1,4 @@
-source :rubygems
+source "http://rubygems.org"
 
-gem 'thor'
-gem 'middleman'
-#gem 'yaml'
-gem 'activerecord'
-gem 'tilt'
-gem 'haml'
+# Specify your gem's dependencies in sphonglepress.gemspec
+gemspec
