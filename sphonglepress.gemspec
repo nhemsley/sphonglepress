@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Nicholas Hemsley"]
   s.email       = ["nick.hems@gmail.com"]
   s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.summary     = %q{Gem for populating wordpress}
+  s.description = %q{Sphonglepress is a command line utility for interacting with & making the task of importing content into a wordpress site}
 
   s.rubyforge_project = "sphonglepress"
 
