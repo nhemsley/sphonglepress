@@ -3,12 +3,15 @@ module Sphonglepress
     
     
     class << self
-      def init(site)
+      def init(options)
+        site = options['middleman_dir']
         puts "Creating Middleman static site"
         `mm-init #{site}`
-        
-        `cp #{::Sphonglepress::App::TEMPLATE_DIR.join("middleman/layout.haml")} #{site}/views`
-        `cp #{::Sphonglepress::App::TEMPLATE_DIR.join("middleman/default.html.haml")} #{site}/views`
+        `rm #{site}/source/*.erb`
+        to_copy = Dir["#{Sphonglepress::App::TEMPLATE_DIR}/#{options['template']}/middleman/*.haml"]
+        to_copy.each do |c|
+        `cp #{c} #{site}/source`
+        end
 
       end
       
@@ -16,6 +19,13 @@ module Sphonglepress
         cwd = Dir.pwd
         Dir.chdir ::Sphonglepress::Config.config["middleman_dir"]
         puts `mm-build`
+        Dir.chdir cwd
+      end
+      
+      def clean
+        cwd = Dir.pwd
+        Dir.chdir ::Sphonglepress::Config.config["middleman_dir"]
+        puts `rm -rf build`
         Dir.chdir cwd
       end
     end

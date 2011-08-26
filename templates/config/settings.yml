@@ -1,7 +1,9 @@
 --- 
-wp_git_tag: v3.1.3
+wp_git_tag: v3.2.1
 wp_clone_dir: wordpress
-wp_git_url: https://github.com/dxw/wordpress
-wp_theme_dir: twentyten
+wp_git_url: /home/nick-natty/work/projects/wordpress
+wp_git_url_old: https://github.com/nhemsley/wordpress
+wp_theme_dir: default
 middleman_dir: middleman
 static_dir: static
+template: splash

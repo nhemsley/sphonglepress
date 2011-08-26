@@ -3,13 +3,11 @@ module Sphonglepress
     class << self
       def headers_footers
         build_dir = ::Sphonglepress::Config.config["middleman_dir"].join("build")
-        puts build_dir
-        
-        default_file = build_dir.join("default.html")
+        default_file = build_dir.join("index.html")
         default_parts = split_file(IO.read(default_file))
         
         other_files = Dir["#{build_dir}/*.html"]. #without default.html
-                    reject {|file| Pathname.new(file).basename.to_s == "default.html"}
+                    reject {|file| Pathname.new(file).basename.to_s == "index.html"}
         
         others = {}
         other_files.each do |file|
@@ -18,7 +16,8 @@ module Sphonglepress
         
         File.open(::Sphonglepress::Config.wp_theme_dir.join("header.php"), 'w') {|file| file.write(default_parts[:header])}
         File.open(::Sphonglepress::Config.wp_theme_dir.join("footer.php"), 'w') {|file| file.write(default_parts[:footer])}
-        
+        File.open(::Sphonglepress::Config.wp_theme_dir.join("index.php"), 'w') {|file| file.write(default_parts[:content])}
+
         others.each do |name, parts|
           File.open(::Sphonglepress::Config.wp_theme_dir.join("header-#{name}.php"), 'w') {|file| file.write(parts[:header])}
           File.open(::Sphonglepress::Config.wp_theme_dir.join("footer-#{name}.php"), 'w') {|file| file.write(parts[:footer])}
@@ -27,7 +26,10 @@ module Sphonglepress
       end
       
       def files
-        cmd = "cp -r #{CONFIG["middleman_dir"]}/build/*/ #{::Sphonglepress::WP_DIR}"
+        cmd = "cp -r #{CONFIG["middleman_dir"]}/build/*/ #{::Sphonglepress::Config.wp_theme_dir}"
+        `#{cmd}`
+        cmd = "cp -r #{CONFIG["middleman_dir"]}/build/stylesheets/style.css #{::Sphonglepress::Config.wp_theme_dir}"
+        puts cmd
         `#{cmd}`
       end
 

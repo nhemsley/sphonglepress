@@ -5,12 +5,16 @@ require 'active_record'
 require 'pathname'
 require 'logger'
 require "thor"
+require 'ruby-debug'
+require 'fileutils'
 
 begin
   ActiveRecord::Base.logger = Logger.new('sql.log')
   ActiveRecord::Base.configurations = YAML::load(IO.read('config/database.yml'))
   ActiveRecord::Base.establish_connection("development")
-rescue
+rescue Exception => e
+  puts "Error configuring active record:"
+  puts e.to_s
 end
 
 require "sphonglepress/extensions.rb"
@@ -27,7 +31,9 @@ begin
   
   require "sphonglepress/models/base_post"
   require "sphonglepress/models/attachment"
-rescue
+rescue Exception => e
+  puts "Error requiring importer, visitor & activemodel classes:"
+  puts e.to_s
 end
 
 module Sphonglepress
@@ -40,8 +46,12 @@ module Sphonglepress
       opts = DEFAULT_OPTIONS.merge options
       Git.clone(opts)
       Git.checkout(opts)
-      Middleman.init(opts["middleman_dir"])
+      Middleman.init(opts)
       Config.create_config(opts)
+      
+      #FIXME: move this somewhere better
+      visitors_dir = TEMPLATE_DIR.join(opts['template'], "visitors")
+      `cp -r #{visitors_dir} config/`
     end
 
     desc "headers_footers", "export headers and footers to wordpress directory"
@@ -52,8 +62,8 @@ module Sphonglepress
 
     desc "clean_wp", "clean up the wordpress directory of the external files from middleman"
     def clean_wp
-      dirs = Dir[LAYOUT_DIR.join("public").to_s << "/*/"]
-      full_dirs = dirs.map {|d| WP_DIR.join(Pathname.new(d).basename)}.join(" ")
+      dirs = Dir[LAYOUT_DIR.join("source").to_s << "/*/"]
+      full_dirs = dirs.map {|d| ::Sphonglepress::Config.wp_theme_dir.join(Pathname.new(d).basename)}.join(" ")
       cmd = "rm -rf #{full_dirs}"
       puts cmd
       `#{cmd}`
@@ -64,15 +74,15 @@ module Sphonglepress
     desc "import_site", "Import the site from sitemap and static files"
     method_options :visitor => :string
     def import_site
-      pages = Importer.import sitemap_hash
+      pages = ::Sphonglepress::Importer.import sitemap_hash
       pages.each { |page| Importer.persist page }
-      visitors = Dir[CONFIG_DIR.join("visitors").to_s << "/*.rb"].map{|v| "config/visitors/" << Pathname.new(v).basename}
+      visitors = Dir[CONFIG_DIR.join("visitors").to_s << "/*.rb"].map{|v| "config/visitors/" << Pathname.new(v).basename.to_s}
       visitors.each do |v|
         puts "requiring #{v}"
-        require v
+        require Dir.pwd.to_s << "/" << v
       end
       pages.each { |page| Importer.visit page }
-      Visitor.subclasses.each {|s| s.once}
+      ::Sphonglepress::Visitor.subclasses.each {|s| s.once}
     end
     
     desc "load_db", "load the most recent 'clean' database dump"
@@ -91,6 +101,7 @@ module Sphonglepress
       dump_file = "#{::Sphonglepress::DB_DUMP_DIR.join("#{CONFIG['db']['development']['database']}")}-#{random}.sql"
       puts "file: #{dump_file}"
       db_opts = Database.db_opts(CONFIG)
+      FileUtils.mkdir_p ::Sphonglepress::DB_DUMP_DIR
 
       `mysqldump #{db_opts} > #{dump_file}`
     end
@@ -118,6 +129,7 @@ module Sphonglepress
     desc "full_refresh", "do a full refresh of the whole shebang (layouts, headers, database, import content)"
     def full_refresh
       clean_wp
+      Middleman.clean
       headers_footers
       export_layout
       load_db
