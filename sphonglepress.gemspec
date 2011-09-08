@@ -27,5 +27,7 @@ Gem::Specification.new do |s|
   s.add_dependency('activerecord')
   s.add_dependency('tilt')
   s.add_dependency('haml')
+  s.add_dependency('mysql')
+
 
 end
