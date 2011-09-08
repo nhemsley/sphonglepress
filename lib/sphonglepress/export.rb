@@ -27,7 +27,7 @@ module Sphonglepress
       end
       
       def files
-        cmd = "cp -r #{CONFIG["middleman_dir"]}/build/*/ #{::Sphonglepress::WP_DIR}"
+        cmd = "cp -r #{CONFIG["middleman_dir"]}/build/*/ #{::Sphonglepress::Config.wp_theme_dir}"
         `#{cmd}`
       end
 
