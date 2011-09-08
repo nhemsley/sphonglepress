@@ -5,13 +5,16 @@ require 'active_record'
 require 'pathname'
 require 'logger'
 require "thor"
-require 'ruby-debug'
 require 'fileutils'
 
+require "sphonglepress/config.rb"
+
 begin
-  ActiveRecord::Base.logger = Logger.new('sql.log')
-  ActiveRecord::Base.configurations = YAML::load(IO.read('config/database.yml'))
-  ActiveRecord::Base.establish_connection("development")
+  if File.exist? 'config/database.yml'
+    ActiveRecord::Base.logger = Logger.new('sql.log')
+    ActiveRecord::Base.configurations = YAML::load(IO.read('config/database.yml'))
+    ActiveRecord::Base.establish_connection("development")
+  end
 rescue Exception => e
   puts "Error configuring active record:"
   puts e.to_s
@@ -20,7 +23,6 @@ end
 require "sphonglepress/extensions.rb"
 require "sphonglepress/git.rb"
 require "sphonglepress/middleman.rb"
-require "sphonglepress/config.rb"
 require "sphonglepress/export.rb"
 require "sphonglepress/database.rb"
 
@@ -32,7 +34,7 @@ begin
   require "sphonglepress/models/base_post"
   require "sphonglepress/models/attachment"
 rescue Exception => e
-  puts "Error requiring importer, visitor & activemodel classes:"
+  puts "Error requiring importer, visitor & activemodel classes (this can probably be ignored):"
   puts e.to_s
 end
 
