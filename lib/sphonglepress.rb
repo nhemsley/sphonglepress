@@ -87,6 +87,16 @@ module Sphonglepress
       ::Sphonglepress::Visitor.subclasses.each {|s| s.once}
     end
     
+    desc "create_db", "create the wordpress database"
+    def create_db
+      Database.create(CONFIG)
+    end
+
+    desc "drop_db", "drop the wordpress database"
+    def drop_db
+      Database.drop(CONFIG)
+    end
+
     desc "load_db", "load the most recent 'clean' database dump"
     def load_db
       Database.drop(CONFIG)
