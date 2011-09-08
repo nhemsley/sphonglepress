@@ -1,3 +1,5 @@
+require 'fileutils'
+
 module Sphonglepress
   class Export
     class << self
@@ -14,6 +16,8 @@ module Sphonglepress
           others[File.basename(file, '.*')] = split_file(IO.read(file))
         end
         
+        FileUtils.mkdir_p ::Sphonglepress::Config.wp_theme_dir unless Dir.exist? ::Sphonglepress::Config.wp_theme_dir
+        
         File.open(::Sphonglepress::Config.wp_theme_dir.join("header.php"), 'w') {|file| file.write(default_parts[:header])}
         File.open(::Sphonglepress::Config.wp_theme_dir.join("footer.php"), 'w') {|file| file.write(default_parts[:footer])}
         File.open(::Sphonglepress::Config.wp_theme_dir.join("index.php"), 'w') {|file| file.write(default_parts[:content])}
@@ -26,9 +30,9 @@ module Sphonglepress
       end
       
       def files
-        cmd = "cp -r #{CONFIG["middleman_dir"]}/build/*/ #{::Sphonglepress::Config.wp_theme_dir}"
+        cmd = "cp -r #{CONFIG["middleman_dir"]}/build/*/ #{::Sphonglepress::Config.config["wp_clone_dir"]}"
         `#{cmd}`
-        cmd = "cp -r #{CONFIG["middleman_dir"]}/build/stylesheets/style.css #{::Sphonglepress::Config.wp_theme_dir}"
+        cmd = "cp -r #{CONFIG["middleman_dir"]}/build/stylesheets/*.css #{::Sphonglepress::Config.wp_theme_dir}/"
         puts cmd
         `#{cmd}`
       end

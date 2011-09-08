@@ -12,6 +12,16 @@ module Sphonglepress::Models
     
     after_initialize :set_dates
     
+    def url
+      current = self
+      urls = []
+      while (current)
+        urls << current.post_title.gsub(/[^ a-zA-Z-]/, "").gsub(" ", "-").downcase
+        current = current.parent
+      end
+      urls.reverse.join("/")
+    end
+    
     private
     def set_dates
       self.post_date = DateTime.now

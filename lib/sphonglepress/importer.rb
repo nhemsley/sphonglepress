@@ -16,7 +16,7 @@ module Sphonglepress
         pages = []
         page = nil
         sorted.each do |key|
-          title = key[2..key.length].gsub("_", " ").upcase
+          title = key[2..key.length].gsub("_", " ")
           if parent
             page = Models::Page.new(:post_title => title, :post_type => "page", :menu_order => i, :parent => parent)
             parent.posts << page
@@ -99,6 +99,9 @@ module Sphonglepress
         filenames
       end
       
+      def images_for_page(page)
+        
+      end
       
     end
   end

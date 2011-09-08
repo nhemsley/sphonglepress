@@ -29,8 +29,9 @@ require "sphonglepress/database.rb"
 
 begin
   require "sphonglepress/importer.rb"
-  require "sphonglepress/visitor.rb"
-  
+  require "sphonglepress/visitors/visitor.rb"
+  require "sphonglepress/visitors/attachment_visitor.rb"
+
   require "sphonglepress/models/base_post"
   require "sphonglepress/models/attachment"
 rescue Exception => e
@@ -84,7 +85,7 @@ module Sphonglepress
         require Dir.pwd.to_s << "/" << v
       end
       pages.each { |page| Importer.visit page }
-      ::Sphonglepress::Visitor.subclasses.each {|s| s.once}
+      ::Sphonglepress::Visitors::Visitor.subclasses.each {|s| s.once}
     end
     
     desc "create_db", "create the wordpress database"

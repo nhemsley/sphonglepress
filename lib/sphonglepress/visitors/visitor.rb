@@ -1,4 +1,4 @@
-module Sphonglepress
+module Sphonglepress::Visitors
   class Visitor
     class << self
       #override this to visit each page
