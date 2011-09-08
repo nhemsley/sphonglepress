@@ -7,8 +7,8 @@ module Sphonglepress
         puts "Creating Middleman static site"
         `mm-init #{site}`
         
-        `cp #{::Sphonglepress::App::TEMPLATE_DIR.join("middleman/layout.haml")} #{site}/views`
-        `cp #{::Sphonglepress::App::TEMPLATE_DIR.join("middleman/default.html.haml")} #{site}/views`
+        `cp #{::Sphonglepress::App::TEMPLATE_DIR.join("middleman/layout.haml")} #{site}/source`
+        `cp #{::Sphonglepress::App::TEMPLATE_DIR.join("middleman/default.html.haml")} #{site}/source`
 
       end
       
