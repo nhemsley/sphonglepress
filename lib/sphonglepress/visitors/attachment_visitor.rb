@@ -4,8 +4,13 @@ module Sphonglepress::Visitors
     class << self
       #override this to visit each page
       def visit(page)
-        url = page.url
-        puts "Attachment: #{url}"
+        attachments_dir = ::Sphonglepress::STATIC_DIR.join("attachments", page.url)
+        Dir["#{attachments_dir}/*"].each do |file|
+          attachment = Sphonglepress::Models::Attachment.new
+          attachment.file = file
+          attachment.post_parent = page.id
+          attachment.save
+        end
       end
       
       #run this once per import

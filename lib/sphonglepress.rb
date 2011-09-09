@@ -139,12 +139,18 @@ module Sphonglepress
       Export.files
     end
     
+    desc "export", "copy static files to wordpress"
+    def export
+      Middleman.build
+      Export.files
+      Export.headers_footers
+    end
+    
     desc "full_refresh", "do a full refresh of the whole shebang (layouts, headers, database, import content)"
     def full_refresh
       clean_wp
       Middleman.clean
-      headers_footers
-      export_layout
+      export
       load_db
       import_site
     end

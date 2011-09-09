@@ -59,7 +59,7 @@ module Sphonglepress
       end
 
       def visit(page)
-        Visitor.subclasses.each do |v|
+        Visitors::Visitor.subclasses.each do |v|
           v.visit(page)
           page.posts.each do |p|
             visit(p)
