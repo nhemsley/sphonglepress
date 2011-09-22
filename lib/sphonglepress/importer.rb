@@ -34,7 +34,7 @@ module Sphonglepress
           begin 
             if File.exist?(page_content_file)
               #puts "found #{page_content_file}"
-              page.post_content = Tilt.new(page_content_file).render
+              page.post_content = Tilt.new(page_content_file, :ugly => true).render
             else
               puts "Couldnt find #{page_content_file} in the static directory"
             end
