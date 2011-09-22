@@ -25,6 +25,7 @@ require "sphonglepress/git.rb"
 require "sphonglepress/middleman.rb"
 require "sphonglepress/export.rb"
 require "sphonglepress/database.rb"
+require "sphonglepress/watcher.rb"
 
 
 begin
@@ -153,6 +154,11 @@ module Sphonglepress
       export
       load_db
       import_site
+    end
+    
+    desc "watch", "monitor directory & reload on change"
+    def watch
+      Watcher.new(self).watch
     end
 
     private

@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
   s.add_dependency('tilt')
   s.add_dependency('haml')
   s.add_dependency('mysql')
+  s.add_dependency('fssm')
 
 
 end
