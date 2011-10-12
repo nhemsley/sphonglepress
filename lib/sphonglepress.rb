@@ -143,7 +143,9 @@ module Sphonglepress
       
       filenames = Importer.filenames_for_site pages
       
-      full_files = filenames.map {|file| STATIC_DIR.join("#{file}.html.haml").to_s }
+      full_files = filenames.
+                    map {|file| STATIC_DIR.join("#{file}.html.haml").to_s }.
+                    reject {|file| File.exist? file }
       
       FileUtils.touch(full_files)
     end
