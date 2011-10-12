@@ -12,7 +12,7 @@ module Sphonglepress
 
       def structure(hash, parent=nil)
         i=0
-        sorted = hash.keys.sort {|a,b| a[0].to_i <=> b[0].to_i }
+        sorted = hash.keys.sort {|a,b| a.split("_").first.to_i <=> b.split("_").first.to_i }
         pages = []
         page = nil
         sorted.each do |key|
@@ -58,11 +58,12 @@ module Sphonglepress
         page.posts.each {|p| persist(p)}
       end
 
-      def visit(page)
-        Visitors::Visitor.subclasses.each do |v|
-          v.visit(page)
+      def visit(page, visitors = Visitors::Visitor.subclasses)
+        visitors.each do |v|
+          visitor = v.instance
+          visitor.visit(page)
           page.posts.each do |p|
-            visit(p)
+            visitor.visit(p)
           end
         end
       end

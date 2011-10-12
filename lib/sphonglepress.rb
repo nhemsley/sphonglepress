@@ -32,6 +32,8 @@ begin
   require "sphonglepress/importer.rb"
   require "sphonglepress/visitors/visitor.rb"
   require "sphonglepress/visitors/attachment_visitor.rb"
+  require "sphonglepress/visitors/document_importer.rb"
+
 
   require "sphonglepress/models/base_post"
   require "sphonglepress/models/attachment"
@@ -85,8 +87,9 @@ module Sphonglepress
         puts "requiring #{v}"
         require Dir.pwd.to_s << "/" << v
       end
+      ::Sphonglepress::Visitors::Visitor.subclasses.each {|s| s.instance.once}
+      
       pages.each { |page| Importer.visit page }
-      ::Sphonglepress::Visitors::Visitor.subclasses.each {|s| s.once}
     end
     
     desc "create_db", "create the wordpress database"
@@ -116,6 +119,17 @@ module Sphonglepress
       puts "file: #{dump_file}"
       db_opts = Database.db_opts(CONFIG)
       FileUtils.mkdir_p ::Sphonglepress::DB_DUMP_DIR
+
+      `mysqldump #{db_opts} > #{dump_file}`
+    end
+    
+    desc "dump_db_live", "dump the current database as database to go live with"
+    def dump_db_live
+      random = rand(36**8).to_s(36)
+      dump_file = "#{::Sphonglepress::DB_DUMP_DIR_LIVE.join("#{CONFIG['db']['development']['database']}")}-#{random}.sql"
+      puts "file: #{dump_file}"
+      db_opts = Database.db_opts(CONFIG)
+      FileUtils.mkdir_p ::Sphonglepress::DB_DUMP_DIR_LIVE
 
       `mysqldump #{db_opts} > #{dump_file}`
     end
@@ -158,8 +172,23 @@ module Sphonglepress
     
     desc "watch", "monitor directory & reload on change"
     def watch
+      Signal.trap("INT") { exit! }
+      puts "Watching"
       Watcher.new(self).watch
     end
+    
+    require 'ruby-debug'
+    desc "import_static_from_doc", "Try and import site structure from site.odt file in the static/document directory"
+    def import_static_from_doc
+      pages = ::Sphonglepress::Importer.import sitemap_hash
+      document_importer_klass = ::Sphonglepress::Visitors::DocumentImporter
+      document_importer_klass.instance.once
+      pages.each { |page| Importer.visit page, [document_importer_klass]}
+    end
+    
+    
+    
+    #desc "populate_static_from_doc"
 
     private
     
@@ -180,6 +209,7 @@ module Sphonglepress
 
   DB_DIR = PROJECT_DIR.join("db")
   DB_DUMP_DIR = PROJECT_DIR.join("db/dumps")
+  DB_DUMP_DIR_LIVE = PROJECT_DIR.join("db/live_dumps")
   STATIC_DIR = PROJECT_DIR.join(CONFIG["static_dir"]) rescue nil
   WP_DIR = PROJECT_DIR.join(CONFIG["wp_clone_dir"]) rescue nil
   WP_UPLOAD_DIR = WP_DIR.join("wp-content/uploads") rescue nil

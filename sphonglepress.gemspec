@@ -29,6 +29,9 @@ Gem::Specification.new do |s|
   s.add_dependency('haml')
   s.add_dependency('mysql')
   s.add_dependency('fssm')
+  #FIXME: move html-cleaner into gem & remove this
+  s.add_dependency('hpricot')
+  s.add_dependency('mime-types')
 
 
 end
