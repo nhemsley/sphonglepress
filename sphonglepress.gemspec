@@ -32,6 +32,9 @@ Gem::Specification.new do |s|
   #FIXME: move html-cleaner into gem & remove this
   s.add_dependency('hpricot')
   s.add_dependency('mime-types')
+  s.add_dependency('nokogiri')
+  s.add_dependency('therubyracer')
+
 
 
 end
