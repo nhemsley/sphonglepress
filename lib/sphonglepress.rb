@@ -107,7 +107,7 @@ module Sphonglepress
       Database.drop(CONFIG)
       Database.create(CONFIG)
       db_opts = Database.db_opts(CONFIG)
-      latest_dump = Dir["#{::Sphonglepress::DB_DUMP_DIR}/*.sql"].sort_by{ |f| File.ctime(f) }.last
+      latest_dump = Dir["#{::Sphonglepress::DB_DUMP_DIR}/*.sql"].sort_by{ |f| File.mtime(f) }.last
       puts "mysql #{db_opts} < #{latest_dump}"
       `mysql #{db_opts} < #{latest_dump}`
     end
@@ -175,6 +175,8 @@ module Sphonglepress
     desc "watch", "monitor directory & reload on change"
     def watch
       Signal.trap("INT") { exit! }
+      Signal.trap("QUIT") { full_refresh }
+
       puts "Watching"
       Watcher.new(self).watch
     end
