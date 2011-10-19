@@ -181,7 +181,6 @@ module Sphonglepress
       Watcher.new(self).watch
     end
     
-    require 'ruby-debug'
     desc "import_static_from_doc", "Try and import site structure from site.odt file in the static/document directory"
     def import_static_from_doc
       pages = ::Sphonglepress::Importer.import sitemap_hash

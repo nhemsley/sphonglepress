@@ -10,7 +10,6 @@ module Sphonglepress::Visitors
 
     #override this to visit each page
     def visit(page)
-      debugger
       found = @segments[page.post_title]
       return unless found
       #page.post_content = found

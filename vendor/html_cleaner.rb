@@ -1,5 +1,4 @@
 require 'hpricot'
-require 'ruby-debug'
 
 class HTMLCleaner
   def initialize(html, options = nil)
