@@ -26,7 +26,7 @@ require "sphonglepress/middleman.rb"
 require "sphonglepress/export.rb"
 require "sphonglepress/database.rb"
 require "sphonglepress/watcher.rb"
-
+require "sphonglepress/doc_exporter.rb"
 
 begin
   require "sphonglepress/importer.rb"
@@ -189,10 +189,15 @@ module Sphonglepress
       pages.each { |page| Importer.visit page, [document_importer_klass]}
     end
     
+    desc "export_doc_from_sitemap", "Output a Word document from the sitemap"
+    def export_doc_from_sitemap
+      pages = ::Sphonglepress::Importer.import sitemap_hash
+      exporter = ::Sphonglepress::DocExporter.new(pages)
+      output_dir = STATIC_DIR.join("site")
+      FileUtils.mkdir_p(output_dir)
+      exporter.export(output_dir)
+    end
     
-    
-    #desc "populate_static_from_doc"
-
     private
     
     def sitemap_hash
