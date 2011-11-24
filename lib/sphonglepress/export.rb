@@ -1,14 +1,16 @@
 require 'fileutils'
+require 'ruby-debug'
 
 module Sphonglepress
   class Export
     class << self
       def headers_footers
         build_dir = ::Sphonglepress::Config.config["middleman_dir"].join("build")
-        default_file = build_dir.join("index.html")
+        layout_dir = build_dir.join("headers")
+        default_file = layout_dir.join("index.html")
         default_parts = split_file(IO.read(default_file))
         
-        other_files = Dir["#{build_dir}/*.html"]. #without default.html
+        other_files = Dir["#{layout_dir}/*.html"]. #without index.html
                     reject {|file| Pathname.new(file).basename.to_s == "index.html"}
         
         others = {}

@@ -36,5 +36,6 @@ Gem::Specification.new do |s|
   s.add_dependency('therubyracer')
   s.add_dependency('mysql2')
   s.add_dependency('rb-inotify')
+  s.add_dependency('json')
 
 end
