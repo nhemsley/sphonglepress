@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
 require "sphonglepress/version"
 
@@ -27,7 +26,6 @@ Gem::Specification.new do |s|
   s.add_dependency('activerecord')
   s.add_dependency('tilt')
   s.add_dependency('haml')
-  s.add_dependency('mysql')
   s.add_dependency('fssm')
   #FIXME: move html-cleaner into gem & remove this
   s.add_dependency('hpricot')
