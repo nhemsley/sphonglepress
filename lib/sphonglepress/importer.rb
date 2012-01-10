@@ -18,8 +18,8 @@ module Sphonglepress
         sorted.each do |key|
           title = key[2..key.length].gsub("_", " ")
           if parent
-            page = Models::Page.new(:post_title => title, :post_type => "page", :menu_order => i, :parent => parent)
-            parent.posts << page
+            #some activerecord caching issue, can't use where
+            page = parent.posts.select{|p| p.post_title == title}.first
           else
             page = Models::Page.new(:post_title => title, :post_type => "page", :menu_order => i)
           end
@@ -44,7 +44,6 @@ module Sphonglepress
           end
           
           i += 10
-          
 
           if hash[key].is_a? Hash
             structure(hash[key], page)
@@ -80,14 +79,16 @@ module Sphonglepress
 
       # http://stackoverflow.com/questions/1939333/how-to-make-a-ruby-string-safe-for-a-filesystem
       def sanitize_filename(filename)
-        filename.strip.gsub(/^.*(\\|\/)/, '').gsub(/[^0-9A-Za-z.\-]/, '-')
+        filename.strip.gsub(/^.*(\\|\/)/, '').gsub(/[^0-9A-Za-z.\-]/, '-').gsub(/-+/, '-')
       end
         
-      def full_path_for_page(page)
-        return "" unless page
-        path = full_path_for_page(page.parent)
-        join = path.length > 0 ? "_" : ""
-        return "#{path << join}" << "#{sanitize_filename(page.post_title)}"
+      def full_path_for_page(page, path)
+        (path.send(:join, *path_array_for_page(page)).to_s << ".html").downcase
+      end
+      
+      def path_array_for_page(page)
+        return [] unless page
+        path_array_for_page(page.parent) << sanitize_filename(page.post_title)
       end
       
       def filenames_for_page(page)

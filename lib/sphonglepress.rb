@@ -82,14 +82,14 @@ module Sphonglepress
     def import_site
       pages = ::Sphonglepress::Importer.import sitemap_hash
       pages.each { |page| Importer.persist page }
-      visitors = Dir[CONFIG_DIR.join("visitors").to_s << "/*.rb"].map{|v| "config/visitors/" << Pathname.new(v).basename.to_s}
-      visitors.each do |v|
-        puts "requiring #{v}"
-        require Dir.pwd.to_s << "/" << v
-      end
+      
+      require_visitors
+      
       ::Sphonglepress::Visitors::Visitor.subclasses.each {|s| s.instance.once}
       
       pages.each { |page| Importer.visit page }
+      
+      ::Sphonglepress::Visitors::Visitor.subclasses.each {|s| s.instance.after}
     end
     
     desc "create_db", "create the wordpress database"
@@ -161,6 +161,9 @@ module Sphonglepress
       Middleman.build
       Export.files
       Export.headers_footers
+      ::Sphonglepress::Visitors::Visitor.subclasses.each do |s| 
+        s.instance.after
+      end
     end
     
     desc "full_refresh", "do a full refresh of the whole shebang (layouts, headers, database, import content)"
@@ -170,6 +173,12 @@ module Sphonglepress
       export
       load_db
       import_site
+      
+      require_visitors
+      
+      ::Sphonglepress::Visitors::Visitor.subclasses.each do |s| 
+        s.instance.after
+      end
     end
     
     desc "watch", "monitor directory & reload on change"
@@ -202,6 +211,14 @@ module Sphonglepress
     
     def sitemap_hash
       YAML::load(IO.read(::Sphonglepress::CONFIG_DIR.join("sitemap.yml")))
+    end
+    
+    def require_visitors
+      visitors = Dir[CONFIG_DIR.join("visitors").to_s << "/*.rb"].map{|v| "config/visitors/" << Pathname.new(v).basename.to_s}
+      visitors.each do |v|
+        require Dir.pwd.to_s << "/" << v
+      end
+
     end
 
     APP_DIR = Pathname.new(File.expand_path(File.dirname(__FILE__))).join("..")

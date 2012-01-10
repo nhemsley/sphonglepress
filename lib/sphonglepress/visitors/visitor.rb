@@ -7,7 +7,13 @@ module Sphonglepress::Visitors
     end
     
     #run this once per import
-    def once
+    def before
     end
+    
+    def after
+      
+    end
+    
+    alias :once :before
   end
 end

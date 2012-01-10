@@ -5,7 +5,7 @@ module Sphonglepress
     def initialize(app)
       @app = app
     end
-      
+    
     def watch
       myself = self
       while true do
@@ -22,12 +22,6 @@ module Sphonglepress
               update {|base, relative| myself.middleman }
               delete {|base, relative| myself.middleman }
               create {|base, relative| myself.middleman }
-            end
-            
-            path ::Sphonglepress::CONFIG_DIR do
-              update {|base, relative| myself.config_sitemap }
-              delete {|base, relative| myself.config_sitemap }
-              create {|base, relative| myself.config_sitemap }
             end
             
           end
@@ -49,13 +43,9 @@ module Sphonglepress
     def middleman
         puts "Middleman directory changed, reloading static assets"
         @app.export
+        @app.import_site
         puts "DONE"
       end
     
-    def config_sitemap
-        puts "Config dir changed, Creating any static files not created"
-        @app.create_static_files
-        puts "DONE"       
-    end
   end
 end

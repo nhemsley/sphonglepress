@@ -5,8 +5,9 @@ module Sphonglepress
     class << self
       def headers_footers
         build_dir = ::Sphonglepress::Config.config["middleman_dir"].join("build")
-        default_file = build_dir.join("index.html")
-        default_parts = split_file(IO.read(default_file))
+        layout_dir = build_dir.join("headers")
+        default_file = layout_dir.join("index.html")
+        default_parts = split_file(IO.read(default_file)) rescue nil
         
         other_files = Dir["#{build_dir}/*.html"]. #without default.html
                     reject {|file| Pathname.new(file).basename.to_s == "index.html"}
@@ -18,9 +19,11 @@ module Sphonglepress
         
         FileUtils.mkdir_p ::Sphonglepress::Config.wp_theme_dir unless Dir.exist? ::Sphonglepress::Config.wp_theme_dir
         
-        File.open(::Sphonglepress::Config.wp_theme_dir.join("header.php"), 'w') {|file| file.write(default_parts[:header])}
-        File.open(::Sphonglepress::Config.wp_theme_dir.join("footer.php"), 'w') {|file| file.write(default_parts[:footer])}
-        File.open(::Sphonglepress::Config.wp_theme_dir.join("index.php"), 'w') {|file| file.write(default_parts[:content])}
+        if default_parts
+          File.open(::Sphonglepress::Config.wp_theme_dir.join("header.php"), 'w') {|file| file.write(default_parts[:header])}
+          File.open(::Sphonglepress::Config.wp_theme_dir.join("footer.php"), 'w') {|file| file.write(default_parts[:footer])}
+          File.open(::Sphonglepress::Config.wp_theme_dir.join("index.php"), 'w') {|file| file.write(default_parts[:content])}
+        end
 
         others.each do |name, parts|
           File.open(::Sphonglepress::Config.wp_theme_dir.join("header-#{name}.php"), 'w') {|file| file.write(parts[:header])}
@@ -33,7 +36,6 @@ module Sphonglepress
         cmd = "cp -r #{CONFIG["middleman_dir"]}/build/*/ #{::Sphonglepress::Config.config["wp_clone_dir"]}"
         `#{cmd}`
         cmd = "cp -r #{CONFIG["middleman_dir"]}/build/stylesheets/*.css #{::Sphonglepress::Config.wp_theme_dir}/"
-        puts cmd
         `#{cmd}`
       end
 
