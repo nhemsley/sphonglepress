@@ -34,7 +34,7 @@ Gem::Specification.new do |s|
   s.add_dependency('mime-types')
   s.add_dependency('nokogiri')
   s.add_dependency('therubyracer')
-  s.add_dependency('mysql2')
+  s.add_dependency('mysql2', '< 0.3')
   s.add_dependency('rb-inotify')
 
 end
