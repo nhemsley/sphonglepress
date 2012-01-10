@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'ruby-debug'
 
 module Sphonglepress
   class Export
@@ -9,7 +10,7 @@ module Sphonglepress
         default_file = layout_dir.join("index.html")
         default_parts = split_file(IO.read(default_file)) rescue nil
         
-        other_files = Dir["#{build_dir}/*.html"]. #without default.html
+        other_files = Dir["#{layout_dir}/*.html"]. #without index.html
                     reject {|file| Pathname.new(file).basename.to_s == "index.html"}
         
         others = {}

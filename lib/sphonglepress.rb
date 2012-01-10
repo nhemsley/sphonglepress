@@ -171,7 +171,7 @@ module Sphonglepress
       clean_wp
       Middleman.clean
       export
-      load_db
+      #load_db
       import_site
       
       require_visitors
@@ -210,7 +210,8 @@ module Sphonglepress
     private
     
     def sitemap_hash
-      YAML::load(IO.read(::Sphonglepress::CONFIG_DIR.join("sitemap.yml")))
+      JSON.parse IO.read(::Sphonglepress::CONFIG_DIR.join("sitemap.json"))
+      #YAML::load(IO.read(::Sphonglepress::CONFIG_DIR.join("sitemap.yml")))
     end
     
     def require_visitors
@@ -231,7 +232,6 @@ module Sphonglepress
   ENV_MODE = "development"
   CONFIG = Config.config
   
-
   DB_DIR = PROJECT_DIR.join("db")
   DB_DUMP_DIR = PROJECT_DIR.join("db/dumps")
   DB_DUMP_DIR_LIVE = PROJECT_DIR.join("db/live_dumps")
@@ -239,4 +239,5 @@ module Sphonglepress
   WP_DIR = PROJECT_DIR.join(CONFIG["wp_clone_dir"]) rescue nil
   WP_UPLOAD_DIR = WP_DIR.join("wp-content/uploads") rescue nil
   LAYOUT_DIR = PROJECT_DIR.join(CONFIG["middleman_dir"]) rescue nil
+  BUILD_DIR = PROJECT_DIR.join(CONFIG["middleman_dir"], "build") rescue nil
 end
