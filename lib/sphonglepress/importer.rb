@@ -37,7 +37,7 @@ module Sphonglepress
           
           pages << page
           
-          page_content_file = ::Sphonglepress::BUILD_DIR.join(s_page["url"][1..-1] || full_path_for_page(page)).to_s
+          page_content_file = ::Sphonglepress::BUILD_DIR.join((s_page["url"][1..-1] rescue nil) || full_path_for_page(page)).to_s
           puts s_page["url"]
           
           if File.file?(page_content_file)
@@ -93,8 +93,8 @@ module Sphonglepress
         filename.strip.gsub(/^.*(\\|\/)/, '').gsub(/[^0-9A-Za-z.\-]/, '-').gsub(/-+/, '-')
       end
         
-      def full_path_for_page(page, path)
-        (path.send(:join, *path_array_for_page(page)).to_s << ".html").downcase
+      def full_path_for_page(page)
+        (path_array_for_page(page).join("/") << ".html").downcase
       end
       
       def path_array_for_page(page)
