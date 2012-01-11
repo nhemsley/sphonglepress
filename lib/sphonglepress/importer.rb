@@ -1,6 +1,6 @@
 require 'tilt'
 require 'haml'
-require 'ruby-debug'
+#require 'ruby-debug'
 require 'sphonglepress/models/page'
 
 module Sphonglepress

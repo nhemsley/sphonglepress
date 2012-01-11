@@ -1,5 +1,5 @@
 require 'fileutils'
-require 'ruby-debug'
+#require 'ruby-debug'
 
 module Sphonglepress
   class Export
